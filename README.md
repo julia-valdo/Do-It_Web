@@ -32,14 +32,14 @@ Además, en caso de no encontrar desarrolladores, Do It contará con sus propios
 ### Inversor
 1. **Home**
    - Ideas ordenadas por popularidad
-   - Ordenamiento por categoría (Aplica filtro en la lista)
+   - Ordenamiento por categoría (aplica filtro en la lista)
    - Barra de busqueda
 2. **Idea**
    - Info de la idea
    - Botón de chat
 3. **Lista de inversiones**
    - Lista de inversiones ordenadas por orden de acuerdo
-### Creador (uwu {*o.o*})
+### Creador 
 1. **Home**
    - Lista de ideas propias + botón crear
 2. **Crear idea**
@@ -52,14 +52,14 @@ Además, en caso de no encontrar desarrolladores, Do It contará con sus propios
    - Botón editar (si no tiene inversor)
    - Botón borrar (te lleva a la home)
 4. **Editar idea**
-   - La misma info editable (A menos que tenga inversor)
+   - La misma info editable (a menos que tenga inversor)
 
 ### Común entre ambos perfiles
 1. **Perfil**
    - Nombre
-   - Botón agregar plata (Validaciones)
+   - Botón agregar plata 
 2. **Chat** 
-   - Lista de mensajes (Faltan detallitos y detallotes)
+   - Lista de mensajes 
 
 ### Concretar el trato
 El inversor podrá confirmar que desea invertir en la idea, y entonces podrá usar créditos.
