@@ -1,45 +1,23 @@
 [
 	{
 		"participantes": [
-			3,
+			1,
 			4
 		],
 		"mensajes": [
 			{
-				"emisor": 3,
-<<<<<<< HEAD
-				"contenido": "hola buenas"
+				"emisor": 1,
+				"contenido": "Hola!"
 			},
 			{
 				"emisor": 4,
-				"contenido": "uwu"
+				"contenido": "Holaa"
 			}
 		],
 		"ultimoMensaje": {
 			"emisor": 4,
-			"contenido": "uwu"
-		}
-	},
-	{
-		"id": 2,
-		"participantes": [
-			3,
-			2
-		],
-		"mensajes": [],
-		"ultimoMensaje": {
-			"emisor": 0,
-			"contenido": ""
-		}
-=======
-				"contenido": "asdadasd"
-			}
-		],
-		"ultimoMensaje": {
-			"emisor": 3,
-			"contenido": "asdadasd"
+			"contenido": "Holaa"
 		},
 		"id": 1
->>>>>>> f18819b4a58dfb836fe47d255d45116312bfff90
 	}
 ]

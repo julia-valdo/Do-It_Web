@@ -9,21 +9,44 @@ class ModelMongo {
         if (!CnxMongoDB.connection)
             throw new DatabaseError("No hay conexión a la base de datos.");
 
-        try {
-            if (email) {
-                const usuario = await CnxMongoDB.db
+        if (email) {
+            let usuario = null;
+            try {
+                usuario = await CnxMongoDB.db
                     .collection("usuarios")
                     .findOne({ email: email });
-                return usuario;
-            } else {
-                const usuarios = await CnxMongoDB.db
+            } catch (error) {
+                throw new DatabaseError(
+                    "Error al leer el archivo de usuarios."
+                );
+            }
+
+            if (!usuario) {
+                throw new InvalidCredentialsError(
+                    "No hay ningún usuario asociado a ese email."
+                );
+            }
+            usuario.id = usuario._id;
+            delete usuario._id;
+            return usuario;
+        } else {
+            let usuarios = null;
+            try {
+                usuarios = await CnxMongoDB.db
                     .collection("usuarios")
                     .find({})
                     .toArray();
-                return usuarios;
+            } catch (error) {
+                throw new DatabaseError(
+                    "Error al leer el archivo de usuarios."
+                );
             }
-        } catch {
-            throw new DatabaseError("Error al leer el archivo de usuarios.");
+
+            usuarios.forEach((usuario) => {
+                usuario.id = usuario._id;
+                delete usuario._id;
+            });
+            return usuarios;
         }
     };
 
@@ -36,6 +59,9 @@ class ModelMongo {
             usuario = await CnxMongoDB.db
                 .collection("usuarios")
                 .findOne({ _id: this.generarObjectId(id) });
+
+            usuario.id = usuario._id;
+            delete usuario._id;
         } catch {
             throw new DatabaseError("Error al leer el archivo de usuarios.");
         }
@@ -62,6 +88,9 @@ class ModelMongo {
 
         try {
             await CnxMongoDB.db.collection("usuarios").insertOne(usuario);
+
+            usuario.id = usuario._id;
+            delete usuario._id;
         } catch {
             throw new DatabaseError("Error al guardar el usuario.");
         }
@@ -93,7 +122,10 @@ class ModelMongo {
         try {
             await CnxMongoDB.db
                 .collection("usuarios")
-                .updateOne({ _id: this.generarObjectId(id) }, { $set: usuario });
+                .updateOne(
+                    { _id: this.generarObjectId(id) },
+                    { $set: usuario }
+                );
         } catch {
             throw new DatabaseError("Error al actualizar el usuario.");
         }
@@ -125,16 +157,27 @@ class ModelMongo {
             if (idCreador) {
                 const creador = await CnxMongoDB.db
                     .collection("usuarios")
-                    .findOne({ _id: this.generarObjectId(idCreador), tipo: "Creador" });
+                    .findOne({
+                        _id: this.generarObjectId(idCreador),
+                        tipo: "Creador",
+                    });
+
+                creador.id = creador._id;
+                delete creador._id;
                 return creador;
             } else {
                 const creadores = await CnxMongoDB.db
                     .collection("usuarios")
                     .find({ tipo: "Creador" })
                     .toArray();
+
+                creadores.forEach((creador) => {
+                    creador.id = creador._id;
+                    delete creador._id;
+                });
                 return creadores;
             }
-        } catch(error){
+        } catch (error) {
             if (error instanceof InvalidCredentialsError) {
                 throw error;
             }
@@ -147,7 +190,7 @@ class ModelMongo {
             throw new InvalidCredentialsError("El id no es válido.");
         }
         return new ObjectId(id);
-    }
+    };
 }
 
 export default ModelMongo;

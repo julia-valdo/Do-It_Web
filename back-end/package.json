@@ -5,14 +5,17 @@
   "description": "",
   "main": "servidor/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node 'servidor/server.js'",
-    "watch": "nodemon 'servidor/server.js'"
+    "test": "mocha ./servidor/test/*.test.js --timeout 10000",
+    "start": "node servidor/index.js",
+    "watch": "nodemon servidor/index.js",
+    "test-idea": "mocha ./servidor/test/idea/idea.test.js --timeout 10000",
+    "test-api-ext": "mocha ./servidor/test/api.ext.test.js --timeout 10000"
   },
   "author": "Do-It Team",
   "license": "MIT",
   "dependencies": {
     "@faker-js/faker": "^8.0.2",
+    "axios": "^1.4.0",
     "chai": "^4.3.7",
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",

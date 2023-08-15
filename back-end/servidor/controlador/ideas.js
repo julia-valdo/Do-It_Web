@@ -1,9 +1,9 @@
 import ServicioIdeas from "../servicio/ideas.js";
-import { InvalidCredentialsError } from "../../errores.js";
+import { InvalidCredentialsError, ValidationError } from "../../errores.js";
 
 class ControladorIdeas {
-    constructor() {
-        this.ServicioIdeas = new ServicioIdeas();
+    constructor(persistencia) {
+        this.ServicioIdeas = new ServicioIdeas(persistencia);
     }
 
     obtenerTop = async (req, res) => {
@@ -12,7 +12,7 @@ class ControladorIdeas {
 
             res.json(topIdeas);
         } catch (error) {
-            if (error instanceof InvalidCredentialsError) {
+            if (error instanceof InvalidCredentialsError || error instanceof ValidationError) {
                 res.status(401).json(error.message);
             } else {
                 res.status(500).json({
@@ -28,9 +28,9 @@ class ControladorIdeas {
             const { idCreador } = req.params;
             const ideas = await this.ServicioIdeas.obtenerIdeas(idCreador);
 
-            res.json(ideas);
+            res.status(200).json(ideas);
         } catch (error) {
-            if (error instanceof InvalidCredentialsError) {
+            if (error instanceof InvalidCredentialsError || error instanceof ValidationError) {
                 res.status(401).json(error.message);
             } else {
                 res.status(500).json({
@@ -51,7 +51,7 @@ class ControladorIdeas {
 
             res.json(ideas);
         } catch (error) {
-            if (error instanceof InvalidCredentialsError) {
+            if (error instanceof InvalidCredentialsError || error instanceof ValidationError) {
                 res.status(401).json(error.message);
             } else {
                 res.status(500).json({
@@ -64,15 +64,19 @@ class ControladorIdeas {
 
     agregarIdea = async (req, res) => {
         try {
-            const idea = req.body;
-            idea.imagen = req.file.filename;
+            const idea = req.body;   
+            if(req.file){
+                idea.imagen = req.file.filename;
+            }                
+            else idea.imagen = idea.imagen
+            
             const ideaAgregada = await this.ServicioIdeas.agregarIdea(idea);
 
             res.json(ideaAgregada);
         } catch (error) {
-            if (error instanceof InvalidCredentialsError) {
+            if (error instanceof InvalidCredentialsError || error instanceof ValidationError) {
                 res.status(401).json(error.message);
-            } else {
+            } else {                   
                 res.status(500).json({
                     message:
                         "Hubo un problema interno. Intente nuevamente más tarde.",
@@ -88,7 +92,7 @@ class ControladorIdeas {
 
             res.json({ message: "Idea eliminada exitosamente." });
         } catch (error) {
-            if (error instanceof InvalidCredentialsError) {
+            if (error instanceof InvalidCredentialsError || error instanceof ValidationError) {
                 res.status(401).json(error.message);
             } else {
                 res.status(500).json({
@@ -109,7 +113,7 @@ class ControladorIdeas {
             );
             res.json(ideaActualizada);
         } catch (error) {
-            if (error instanceof InvalidCredentialsError) {
+            if (error instanceof InvalidCredentialsError || error instanceof ValidationError) {
                 res.status(401).json(error.message);
             } else {
                 res.status(500).json({
@@ -133,6 +137,7 @@ class ControladorIdeas {
             );
             res.json(ideaActualizada);
         } catch (error) {
+            console.log(error);
             res.status(500).json({
                 message:
                     "Hubo un problema interno. Intente nuevamente más tarde.",

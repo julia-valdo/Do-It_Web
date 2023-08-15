@@ -39,7 +39,7 @@
                                                 </button>
                                             </RouteterLink>
                                         </div>
-                                        <div class="col-md-2 offset-md-1 pt-2">
+                                        <div class="col-md-3 offset-md-1 pt-2">
                                             <input
                                                 v-if="!yaInvirtio"
                                                 v-model="idea.invertido"
@@ -47,6 +47,7 @@
                                                 id="txtInvertido"
                                                 name="txtInvertido"
                                                 class="form-control shadow"
+                                                min="1"
                                                 required />
                                         </div>
                                         <div
@@ -103,13 +104,16 @@ const getInversiones = async () => {
 };
 
 const getCreador = async () => {
-    await usuarioService.obtenerCreadores(idea.idCreador).then((res) => {
-        creador.value = res.data;
-        nombreCreador.value =
-            creador.value.nombre + " " + creador.value.apellido;
-    }).catch((err) => {
-      console.log(`Ha ocurrido un error: ${err.response.data}`);
-    })
+    await usuarioService
+        .obtenerCreadores(idea.idCreador)
+        .then((res) => {
+            creador.value = res.data;
+            nombreCreador.value =
+                creador.value.nombre + " " + creador.value.apellido;
+        })
+        .catch((err) => {
+            console.log(`Ha ocurrido un error: ${err.response.data}`);
+        });
 };
 
 onMounted(() => {
@@ -128,33 +132,37 @@ const invertirIdea = async (idea) => {
         dineroInvertido: idea.invertido,
     };
 
-    await inversionService.agregarInversion(inversion);
+    await inversionService
+        .agregarInversion(inversion)
+        .then(async () => {
+            user.dinero -= idea.invertido;
+            await usuarioService.sumarDinero({ dinero: user.dinero }, user.id);
 
-    user.dinero -= idea.invertido;
-    await usuarioService.sumarDinero({ dinero: user.dinero }, user.id);
+            idea.cantidadInversiones = Number(idea.cantidadInversiones) + 1;
+            await ideaService.actualizarIdea(idea.id, idea);
 
-    idea.cantidadInversiones = Number(idea.cantidadInversiones) + 1;
-
-    await ideaService.actualizarIdea(idea.id, idea);
-    router.push(`/inversor/inversiones/`);
+            router.push(`/inversor/inversiones/`);
+        })
+        .catch((err) => {
+            alert(`Ha ocurrido un error: ${err.response.data}`);
+        });
 };
-const contactarCreador = (idea) => {
+const contactarCreador = async (idea) => {
+    let id = user.id;
+    let idCreador = idea.idCreador;
 
-  let id = user.id;
-  let idCreador = parseInt(idea.idCreador);
-  
-  chatService.obtenerChatPorParticipantes(id, idCreador).then(res => {
-    router.replace(`/chat/${res.data.id}`);
-  })
-
-  
+    await chatService.obtenerChatPorParticipantes(id, idCreador).then((res) => {
+        router.replace(`/chat/${res.data.id}`);
+    }).catch((err) => {
+        alert(`Ha ocurrido un error: ${err}`);
+    })
 };
 </script>
 
 <style scoped>
 .btn-info {
     color: #fff;
-    background-color: #17a2b8;  
+    background-color: #17a2b8;
     border-color: #17a2b8;
 }
 .precio {

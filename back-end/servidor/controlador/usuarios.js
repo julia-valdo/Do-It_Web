@@ -2,8 +2,8 @@ import Servicio from "../servicio/usuarios.js";
 import { InvalidCredentialsError, ValidationError } from "../../errores.js";
 
 class Controlador {
-    constructor() {
-        this.servicio = new Servicio();
+    constructor(persistencia) {
+        this.servicio = new Servicio(persistencia);
     }
 
     obtenerUsuario = async (req, res) => {
@@ -72,7 +72,7 @@ class Controlador {
 
             res.json(usuarioActualizado);
         } catch (error) {
-            if (error instanceof InvalidCredentialsError) {
+            if (error instanceof InvalidCredentialsError || error instanceof ValidationError) {
                 res.status(401).json(error.message);
                 return;
             } else {
@@ -91,7 +91,7 @@ class Controlador {
 
             res.json(usuarioBorrado);
         } catch (error) {
-            if (error instanceof InvalidCredentialsError) {
+            if (error instanceof InvalidCredentialsError || error instanceof ValidationError) {
                 res.status(401).json(error.message);
             } else {
                 res.status(500).json({
